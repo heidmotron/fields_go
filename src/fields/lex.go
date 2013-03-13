@@ -25,17 +25,17 @@ type item struct {
   val string
 }
 
-type stateFn func (*lexer) stateFn
+type stateFn func(*lexer) stateFn
 
 type lexer struct {
-  input string
-  start int
-  pos int
-  width int
-  lastPos int
+  input      string
+  start      int
+  pos        int
+  width      int
+  lastPos    int
   parenDepth int
-  state stateFn
-  items chan item
+  state      stateFn
+  items      chan item
 }
 
 func lex(input string) *lexer {
@@ -50,9 +50,9 @@ func lex(input string) *lexer {
 
 func (l *lexer) run() {
   for l.state = lexField; l.state != nil; {
-     l.state = l.state(l)
-   }
-   close(l.items)
+    l.state = l.state(l)
+  }
+  close(l.items)
 }
 
 func (l *lexer) emit(t itemType) {
@@ -60,8 +60,8 @@ func (l *lexer) emit(t itemType) {
   l.start = l.pos
 }
 
-func (l *lexer) nextItem() item  {
-  return <- l.items
+func (l *lexer) nextItem() item {
+  return <-l.items
 }
 
 func (l *lexer) errorf(format string, args ...interface{}) stateFn {
@@ -103,14 +103,14 @@ func lexField(l *lexer) stateFn {
   for {
     rest := l.input[l.pos:]
     if strings.HasPrefix(rest, ",") {
-      if (l.pos > l.start) {
+      if l.pos > l.start {
         l.emit(itemField)
       }
       return lexComma
     }
 
     if strings.HasPrefix(rest, "(") {
-      if (l.pos > l.start) {
+      if l.pos > l.start {
         l.emit(itemField)
         l.parenDepth++
       }
@@ -118,14 +118,14 @@ func lexField(l *lexer) stateFn {
     }
 
     if strings.HasPrefix(rest, ")") {
-      if (l.pos > l.start) {
+      if l.pos > l.start {
         l.emit(itemField)
       }
       return lexRightParen
     }
 
     r := l.next()
-    if r == eof  {
+    if r == eof {
       break
     } else if !isAlphaUnder(r) {
       return l.errorf("unexpected '%s'", r)
@@ -156,7 +156,7 @@ func lexRightParen(l *lexer) stateFn {
   l.pos += len(")")
   l.emit(itemRightParen)
   l.parenDepth--
-  if (l.parenDepth < 0) {
+  if l.parenDepth < 0 {
     return l.errorf("unexpected ')'")
   }
 
@@ -166,4 +166,3 @@ func lexRightParen(l *lexer) stateFn {
 func isAlphaUnder(r rune) bool {
   return r == '_' || (r >= 'A' && r <= 'z')
 }
-

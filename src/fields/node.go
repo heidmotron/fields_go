@@ -7,7 +7,7 @@ type Node interface {
   String() string
 }
 
-type NodeType int;
+type NodeType int
 
 func (t NodeType) Type() NodeType {
   return t
@@ -24,7 +24,7 @@ type ListNode struct {
   Nodes []Node
 }
 
-func (l *ListNode) String() string{
+func (l *ListNode) String() string {
   s := "\nLN\n"
   for _, node := range l.Nodes {
     s += "\t" + node.String() + "\n"

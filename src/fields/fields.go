@@ -1,9 +1,10 @@
 package fields
+
 //import "fmt"
 type Tree struct {
-  Root *ListNode
-  lex *lexer
-  token [2]item
+  Root      *ListNode
+  lex       *lexer
+  token     [2]item
   peekCount int
 }
 
@@ -40,7 +41,7 @@ func (t *Tree) parse() {
 
 /**
   (collection / field) *
- */
+*/
 func (t *Tree) parseFieldOrCollection() Node {
   token := t.next()
   if token.typ == itemField {
@@ -81,13 +82,12 @@ func (t *Tree) parseInner() []Node {
   return nodes
 }
 
-func Parse(input string) (*Tree, error)  {
+func Parse(input string) (*Tree, error) {
   t := &Tree{
     Root: &ListNode{NodeType: NodeList},
-    lex: lex(input),
+    lex:  lex(input),
   }
 
   t.parse()
   return t, nil
 }
-
